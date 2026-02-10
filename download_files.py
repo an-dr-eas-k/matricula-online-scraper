@@ -12,9 +12,10 @@ from encryption_routine import encryption_routine
 from headers import csrf_request_headers, download_image_headers
 
 class Downloader:
-    def __init__(self, record_URL, file_range, base_images_dir):
+    def __init__(self, record_URL, start_file, file_range, base_images_dir):
         self.session = requests.Session()
         self.record_URL = record_URL
+        self.start_file = start_file
         self.file_range = file_range
         self.base_images_dir = base_images_dir
 
@@ -72,6 +73,12 @@ class Downloader:
 
         self.image_URLs_and_labels = tuple(zip(full_files_list, full_labels_list))
 
+        if self.start_file is not None:
+            matching_items = [item for item in self.image_URLs_and_labels if item[1] == self.start_file]
+            if not matching_items:
+                self.log_error_and_exit(f"Start file '{self.start_file}' not found in labels, Exiting")
+            start_index = self.image_URLs_and_labels.index(matching_items[0])
+            self.image_URLs_and_labels = self.image_URLs_and_labels[start_index:]
         # if a range is provided and the range is less than the number of scraped files, use it
         if self.file_range is not None and self.file_range < len(self.image_URLs_and_labels):
             self.image_URLs_and_labels = self.image_URLs_and_labels[0:self.file_range]
@@ -107,6 +114,7 @@ class Downloader:
 
             while request_attempts < 3:
                 try:
+                    logging.info(f"using url {url} for image label {image_label}")
                     response = self.session.get(url, headers=download_image_headers())
                     if response.status_code == 200:
                         self.save_image(response.content, image_label, file_number)

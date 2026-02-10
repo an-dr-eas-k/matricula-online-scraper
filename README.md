@@ -1,7 +1,7 @@
 # Matricula Online Scraper
 [Matricula Online](https://data.matricula-online.eu/) is an online resource that contains various records used for genealogical research. This program can download any collection of scanned images from the site while preserving relevant information about the document and individual scans.
 ## Installation
-**Make sure you are using Python >=3.6**
+**Make sure you are using Python [3.6 - 3.11]**
 
 To Install Files:
 ```bash
@@ -26,5 +26,9 @@ python main.py -o ./images -t ./urls.txt
 To Download a Range of Pages from an Archive:
 ```bash
 python main.py -o ./images -r 10 -u https://data.matricula-online.eu/en/deutschland/akmb/militaerkirchenbuecher/0001
+```
+To Download a Range of Pages from an Archive starting at a given image id:
+```bash
+python main.py -o ./images -s 1852-1887_0013 -r 2 -u https://data.matricula-online.eu/en/deutschland/akmb/militaerkirchenbuecher/0001
 ```
 If you run into any problems, feel free to create an issue. Furthermore, your contribution is encouraged, so feel free to make a pull request if you think something can be improved. Enjoy!

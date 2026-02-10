@@ -1,3 +1,4 @@
 /development-resources
 /images
 **/__pycache__
+.venv**

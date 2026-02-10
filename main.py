@@ -17,6 +17,7 @@ def get_parsed_args():
 
     download_parser.add_argument("-o", "--output-directory", help="The directory to store the folder of downloaded images", required=True)
     download_parser.add_argument("-r", "--range", help="The number of pages beyond the input page to download")
+    download_parser.add_argument("-s", "--start-file", help="The file number to start downloading from (default is 1)")
 
     input_group.add_argument("-u", "--url", help="URL to download the images from")
     input_group.add_argument("-t", "--text-file", help="Path to file containing a list of scanned image URLs")
@@ -40,24 +41,24 @@ def verify_archive_list_exists(urls_file_path):
         logging.error(f"{urls_file_path} Not Found, Exiting")
         sys.exit()
 
-def download_archive(url, file_range, output_directory):
-    download = Downloader(url, file_range, output_directory)
+def download_archive(url, start_file, file_range, output_directory):
+    download = Downloader(url, start_file, file_range, output_directory)
     download.fetch_record_page()
     download.download_files()
 
-def download_archives_from_list(urls_file_path, file_range, output_directory):
+def download_archives_from_list(urls_file_path, start_file, file_range, output_directory):
     with open(urls_file_path) as f:
         urls = f.read().splitlines()
 
     for url in urls:
-        download_archive(url, file_range, output_directory)
+        download_archive(url, start_file, file_range, output_directory)
 
 if __name__ == "__main__":
     args = get_parsed_args()
     output_directory = args.output_directory
 
     if args.url is not None:
-        download_archive(args.url, args.range, output_directory)
+        download_archive(args.url, args.start_file, args.range, output_directory)
     else:
         verify_archive_list_exists(args.text_file)
-        download_archives_from_list(args.text_file, args.range, output_directory)
+        download_archives_from_list(args.text_file, args.start_file, args.range, output_directory)
